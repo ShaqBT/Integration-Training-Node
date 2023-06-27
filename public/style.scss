@@ -5,6 +5,9 @@
     background-color: #020213;
     padding: 1%;
     h1 {
+      height: 10vh;
+    }
+    h1, h2, h5 {
       color: #F4F4F9;
       display: flex;
       justify-content: center;
@@ -12,6 +15,9 @@
       height: 10vh;
       text-decoration: none;
       font-family: 'Raleway', sans-serif;
+    }
+    h5 {
+      margin: -1%;
     }
     hr {
         color: #F4F4F9;
