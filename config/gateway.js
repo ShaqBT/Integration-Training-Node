@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-var gateway = new braintree.BraintreeGateway({
+// <--- SET UP GATEWAY CONFIGURATION BELOW --->
+const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
-  merchantId: process.env.MERCHANT_ID,
-  publicKey: process.env.PUBLIC_KEY,
-  privateKey: process.env.PRIVATE_KEY,
+  merchantId: '67mmk5hdbw6rt32',
+  publicKey: 'knt7xgn3hxb6fygj',
+  privateKey: 'a9fbf664baf2ecaf07fc759f69d7f666'
 });
+// <--- / END --->
 
 export default gateway;
