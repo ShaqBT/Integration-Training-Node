@@ -1,19 +1,17 @@
 import express from "express";
 import { clientTokenGeneration } from "../controllers/clientToken.js";
 import { transactionSale } from "../controllers/transactions.js";
-import { index } from "../controllers/index.js";
+import { clientTokenServer, credentials, index } from "../controllers/index.js";
 
 const router = express.Router();
 
 router.get("/", index)
 
-router.get("/home", (req, res) => res.render("home"))
+router.get("/credentials", credentials)
+
+router.get("/client-token", clientTokenServer)
 
 router.get("/drop-in", clientTokenGeneration);
-
-router.get("/hosted-fields", clientTokenGeneration);
-
-router.get("/three-d-secure", clientTokenGeneration);
 
 router.post("/transaction-sale", transactionSale);
 
