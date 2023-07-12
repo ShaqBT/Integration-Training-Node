@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<%- include('../partials/head.ejs') %>
+
+    <body>
+        <div id='checkout-page' class='mx-auto'>
+            <a id="homeButton" href="/"><i class="fa fa-home"></i></a>
+            <form id='paymentForm' class='row g-3' action='/transaction' method='post'>
+                <div id="dropin-holder">
+                    <!-- Enter Drop-in UI HTML Code here -->
+                </div>
+            </form>
+            <%- include('partials/info.ejs') %>
+
+                <!-- Add Drop-in UI script tag -->
+                <script type='text/javascript'>
+
+                // <—- BRAINTREE DROP-IN UI -->
+
+
+                // <—- END -->
+
+                </script>
+    </body>
+
+</html>
