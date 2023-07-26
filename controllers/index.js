@@ -26,7 +26,7 @@ export const clientTokenServer = async (req, res) => {
     const result = await clientTokenGeneration()
     const clientToken = result.clientToken
     updateData("clientTokenCompleted")
-    var feedback = { status: "SUCCESS", token: clientToken, decoded: atob(clientToken) }
+    var feedback = { status: "SUCCESS", token: clientToken, decoded: Buffer.from(clientToken, 'base64').toString('utf8') }
   } catch (exception) {
     console.log(exception)
     var feedback = { status: "FAILURE", data: exception }
