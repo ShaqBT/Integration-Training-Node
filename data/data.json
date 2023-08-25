@@ -1,7 +1,1 @@
-{
-    "name": "",
-    "credentialsCompleted": false,
-    "clientTokenCompleted": false,
-    "dropinCompleted": false,
-    "transactionCompleted": false
-}
+{"name":"","credentialsCompleted":true,"clientTokenCompleted":true,"dropinCompleted":true,"transactionCompleted":false}
