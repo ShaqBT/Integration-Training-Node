@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // <--- SET UP GATEWAY CONFIGURATION BELOW --->
-var gateway = "INSERT CODE HERE"
+var gateway =  "Enter API credentials here"
 // <--- / END --->
 
 export default gateway;
