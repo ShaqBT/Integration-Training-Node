@@ -73,7 +73,31 @@ h5 {
   box-shadow: 4px 4px 4px 4px silver;
   padding: 1%;
 }
+.docs-card a,
+.docs-card button {
+  margin-right: 3%;
+}
 
 #dropin-container {
   width: 55%;
+}
+
+#form-holder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 55%;
+}
+
+#selection-form, #pay-now-form, #pay-later-form {
+  width: 25%;
+  height: 30vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#pay-later-form {
+  margin-top: -10%;
 }/*# sourceMappingURL=style2.css.map */

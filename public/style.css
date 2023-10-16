@@ -136,4 +136,7 @@
   margin-top: 4%;
   box-shadow: 4px 4px 4px 4px silver;
   padding: 1%;
+}
+.docs-card a, .docs-card button {
+  margin-right: 1%;
 }/*# sourceMappingURL=style.css.map */
