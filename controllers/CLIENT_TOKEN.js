@@ -5,5 +5,6 @@ export const clientTokenGeneration = async () => {
 };
 
 export const clientTokenForDropIn = (req, res) => {
+  
   res.render("DROP-IN")
 };

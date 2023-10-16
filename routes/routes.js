@@ -2,7 +2,8 @@ import express from "express";
 import { clientTokenForDropIn } from "../controllers/CLIENT_TOKEN.js";
 import { transactionSale } from "../controllers/TRANSACTION.js";
 import { clientTokenServer, credentials, index, transaction, transactionReady } from "../controllers/index.js";
-import { generateClientToken, transactionAdjustAuthorization, transactionClone, transactionFind, transactionRefund, transactionSaleToken, transactionSearch, transactionSettlementDeclined, transactionSettling, transactionSubmitForPartialSettlement, transactionSubmitForSettlement, transactionVoid } from "../controllers/transactions.js"
+import { Sale, generateClientToken, transactionAdjustAuthorization, transactionClone, transactionFind, transactionRefund, transactionSaleToken, transactionSearch, transactionSettlementDeclined, transactionSettling, transactionSubmitForPartialSettlement, transactionSubmitForSettlement, transactionVoid } from "../controllers/transactions.js"
+import { usBankAccount } from "../controllers/payment-methods.js";
 
 const router = express.Router();
 
@@ -44,7 +45,9 @@ router.get("/checkout/local-payment-methods", generateClientToken);
 
 router.get("/checkout/ach-debit", generateClientToken);
 
-// TRANSACTIONS
+// TRANSACTION
+
+router.post("/sale", Sale);
 
 router.get("/sale-token", transactionSaleToken);
 
@@ -67,5 +70,9 @@ router.get("/transaction-search", transactionSearch);
 router.get("/transaction-settling", transactionSettling);
 
 router.get("/transaction-settlement-declined", transactionSettlementDeclined);
+
+// CUSTOMER
+
+router.post("/ach-vault", usBankAccount);
 
 export default router;

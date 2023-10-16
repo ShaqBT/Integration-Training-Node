@@ -6,83 +6,245 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PayPal Checkout</title>
-    <link rel='stylesheet' href='/style2.css' type='text/css'>
+    <link rel="stylesheet" href="/style2.css" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 </head>
 
 <body>
-    <div
-        style="height: 100vh; width:100%; display:flex; justify-content:center; flex-direction: column; align-items:center">
-        <div id="paypal-button"></div>
-    </div>
+    <%- include('../partials/nav-bar.ejs') %>
+        <div class="container-fluid mx-auto" style="padding: 2%;">
+            <div class="mx-auto" id="form-holder">
 
-    <script src="https://js.braintreegateway.com/web/3.97.1/js/client.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.97.1/js/paypal-checkout.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.97.1/js/data-collector.min.js"></script>
-    <script>
+                <form id="selection-form" action="/" method="post">
+                    <label for="amount" class="form-label">Transaction amount</label>
+                    <input class="form-control form-control-lg" value="100.00" aria-label=".form-control-lg example"
+                        type="number" name="amount-selection" id="amount">
+                    <br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payOption" id="payNow" checked>
+                        <label class="form-check-label" for="payNow">
+                            Pay Now
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payOption" id="payLater">
+                        <label class="form-check-label" for="payLater">
+                            Pay Later
+                        </label>
+                    </div>
+                    <br>
+                    <input class="form-control form-control-lg btn-dark" aria-label=".form-control-lg example"
+                        type="submit" id="selection-submit" value="Continue">
+                </form>
 
-        braintree.client.create({
-            authorization: "<%= clientToken %>",
-        }, (err, clientInstance) => {
-            if (err) {
-                console.error("Error creating client:", err);
-                return;
+                <form hidden id="pay-now-form" action="/sale" method="post">                  
+                </form>
+
+                <form hidden id="pay-later-form" action="/sale" method="post">
+                </form>
+
+                <button hidden id="pay-options" class="btn btn-dark">Back to other options...</button>
+
+            </div>
+
+            <div class='docs-card mx-auto' style="width: fit-content;">
+                <section style="display: flex; justify-content: space-evenly;">
+                    <a target="_blank"
+                        href="https://developer.paypal.com/braintree/docs/guides/paypal/client-side/javascript/v3/"
+                        class="btn btn-primary">PayPal Client-Side Docs</a>
+                    <a target="_blank" href="https://braintree.github.io/braintree-web/current/PayPalCheckout.html"
+                        class="btn btn-primary">Additonal Documentation</a>
+                    <a target="_blank"
+                        href="https://developer.paypal.com/braintree/docs/guides/paypal/testing-go-live/#linked-paypal-testing"
+                        class="btn btn-primary">PayPal Sanbox Setup</a>
+                </section>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://js.braintreegateway.com/web/3.97.2/js/client.min.js"></script>
+        <script src="https://js.braintreegateway.com/web/3.97.2/js/paypal-checkout.min.js"></script>
+        <script src="https://js.braintreegateway.com/web/3.97.2/js/data-collector.min.js"></script>
+        <script>
+
+            const CLIENT_AUTHORIZATION = "<%= clientToken %>"
+
+            const amountInput = document.getElementById("amount")
+            const selectionForm = document.getElementById("selection-form")
+            const selectionButton = document.getElementById("selection-submit")
+
+            const payNowForm = document.getElementById("pay-now-form")
+            const payLaterForm = document.getElementById("pay-later-form")
+
+            const backButton = document.getElementById("pay-options")
+
+            var amount;
+
+            selectionButton.addEventListener("click", (event) => {
+                event.preventDefault()
+                amount = amountInput.value
+                selectionForm.setAttribute("hidden", true) // Removes form to select PayPal option
+                backButton.removeAttribute("hidden", true) // Shows button to go back to form to select PayPal option
+                if (document.getElementById("payNow").checked) {
+                    payNowForm.removeAttribute("hidden", true)
+                    payNowForm.innerHTML =
+                        `
+                            <input type="hidden" name="amount" value=${amount}>
+                            <input type="hidden" name="nonce" id="nonce">
+                            <div id="paypal-button"></div>
+                        `
+                    payNow()
+                }
+                if (document.getElementById("payLater").checked) {
+                    payLaterForm.removeAttribute("hidden", true)
+                    payLaterForm.innerHTML =
+                        `
+                            <input type="hidden" name="amount" value=${amount}>
+                            <input type="hidden" name="nonce" id="nonce">
+                            <div id="pay-later-button"></div>
+                            <div data-pp-message data-pp-layout="text" data-pp-text-color="black" data-pp-logo-type="inline"
+                            data-pp-amount=${amount}></div>
+                        `
+                    payLater()
+                }
+            })
+
+            backButton.addEventListener("click", (event) => {
+                event.preventDefault()
+                // Removes forms and button
+                backButton.setAttribute("hidden", true)
+                payNowForm.setAttribute("hidden", true)
+                payLaterForm.setAttribute("hidden", true)
+                // Shows form
+                selectionForm.removeAttribute("hidden", true)
+            })
+
+            // ONE-TIME PAYMENT
+
+            var payNow = () => {
+
+                braintree.client.create({
+                    authorization: CLIENT_AUTHORIZATION
+                }, function (clientErr, clientInstance) {
+                    if (clientErr) {
+                        console.error('Error creating client:', clientErr);
+                        return;
+                    }
+
+                    braintree.paypalCheckout.create({
+                        client: clientInstance
+                    }, function (paypalCheckoutErr, paypalCheckoutInstance) {
+
+
+                        paypalCheckoutInstance.loadPayPalSDK({
+                            vault: true
+                        }, function () {
+                            paypal.Buttons({
+                                fundingSource: paypal.FUNDING.PAYPAL,
+                                createBillingAgreement: function () {
+                                    return paypalCheckoutInstance.createPayment({
+                                        flow: 'vault',
+                                        billingAgreementDescription: 'Your agreement description',
+                                        enableShippingAddress: true,
+                                        shippingAddressEditable: false,
+                                        shippingAddressOverride: {
+                                            recipientName: 'Scruff McGruff',
+                                            line1: '1234 Main St.',
+                                            line2: 'Unit 1',
+                                            city: 'Chicago',
+                                            countryCode: 'US',
+                                            postalCode: '60652',
+                                            state: 'IL',
+                                            phone: '123.456.7890'
+                                        }
+                                    });
+                                },
+
+                                onApprove: function (data, actions) {
+                                    return paypalCheckoutInstance.tokenizePayment(data, function (err, payload) {
+                                        // Submit 'payload.nonce' to your server
+                                        const nonce = payload.nonce
+                                        const nonceInput = document.getElementById("nonce")
+                                        nonceInput.value = nonce
+                                        payNowForm.submit()
+                                    });
+                                },
+
+                                onCancel: function (data) {
+                                    console.log('PayPal payment canceled', JSON.stringify(data, 0, 2));
+                                },
+
+                                onError: function (err) {
+                                    console.error('PayPal error', err);
+                                }
+                            }).render('#paypal-button').then(function () {
+                            });
+                        });
+                    });
+                });
             }
 
-            braintree.paypalCheckout.create({
-                client: clientInstance
-            }, (paypalCheckoutErr, paypalCheckoutInstance) => function (paypalCheckoutErr, paypalCheckoutInstance) {
-                paypalCheckoutInstance.loadPayPalSDK({
-                    vault: true
-                }, function () {
-                    paypal.Buttons({
-                        fundingSource: paypal.FUNDING.PAYPAL,
+            // PAY IN INSTALLMENTS
 
-                        createBillingAgreement: function () {
-                            return paypalCheckoutInstance.createPayment({
-                                flow: 'vault', // Required
+            var payLater = () => {
 
-                                // The following are optional params
-                                billingAgreementDescription: 'Your agreement description',
-                                enableShippingAddress: true,
-                                shippingAddressEditable: false,
-                                shippingAddressOverride: {
-                                    recipientName: 'Scruff McGruff',
-                                    line1: '1234 Main St.',
-                                    line2: 'Unit 1',
-                                    city: 'Chicago',
-                                    countryCode: 'US',
-                                    postalCode: '60652',
-                                    state: 'IL',
-                                    phone: '123.456.7890'
-                                }
+                braintree.client.create({
+                    authorization: CLIENT_AUTHORIZATION
+                }, function (clientErr, clientInstance) {
+                    if (clientErr) {
+                        console.error('Error creating client:', clientErr);
+                        return;
+                    }
+
+                    braintree.paypalCheckout.create({
+                        client: clientInstance
+                    }, function (paypalCheckoutErr, paypalCheckoutInstance) {
+
+
+                        paypalCheckoutInstance.loadPayPalSDK({
+                            components: 'buttons,messages',
+                            currency: 'USD',
+                            'enable-funding': 'paylater',
+                            dataAttributes: {
+                                amount: amount
+                            }
+                        }, function () {
+                            var button = paypal.Buttons({
+                                fundingSource: paypal.FUNDING.PAYLATER,
+
+                                createOrder: function () {
+                                    return paypalCheckoutInstance.createPayment({
+                                        flow: 'checkout',
+                                        amount: amount,
+                                        currency: 'USD'
+                                    });
+                                },
+                                onApprove: function (data, actions) {
+                                    return paypalCheckoutInstance.tokenizePayment(data, function (err, payload) {
+                                        // Submit 'payload.nonce' to your server
+                                        const nonce = payload.nonce
+                                        const nonceInput = document.getElementById("nonce")
+                                        nonceInput.value = nonce
+                                        payLaterForm.submit()
+                                    });
+                                },
                             });
-                        },
-
-                        onApprove: function (data, actions) {
-                            return paypalCheckoutInstance.tokenizePayment(data, function (err, payload) {
-                                // Submit 'payload.nonce' to your server
-                            });
-                        },
-
-                        onCancel: function (data) {
-                            console.log('PayPal payment canceled', JSON.stringify(data, 0, 2));
-                        },
-
-                        onError: function (err) {
-                            console.error('PayPal error', err);
-                        }
-                    }).render('#paypal-button').then(function () {
-                        // The PayPal button will be rendered in an html element with the ID
-                        // 'paypal-button'. This function will be called when the PayPal button
-                        // is set up and ready to be used
+                            if (!button.isEligible()) return
+                            button.render('#pay-later-button');
+                        });
                     });
+                })
+            }
 
-                });
-
-            });
-        })
-
-    </script>
+        </script>
 </body>
 
 </html>
